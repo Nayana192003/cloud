@@ -1,76 +1,6 @@
 [version_1.0.5] 
 
 Lab 5.1: Working with Amazon DynamoDB
-Lab overview and objectives
-In this lab, you use Amazon DynamoDB to store and manage menu information. Using databases, such as DynamoDB, simplifies data management because you can easily query, sort, edit, and index data. You will use both the AWS Command Line Interface (AWS CLI) and the AWS SDK for Python (Boto3) to work with DynamoDB. 
-
-In upcoming labs, you will use application programming interface (API) calls from the café website to dynamically retrieve and update data that's stored in a DynamoDB table. 
-
-After completing this lab, you should be able to:
-
-Create a new DynamoDB table 
-Add data to the table 
-Modify table items based on conditions 
-Query the table 
-Add a global secondary index to the table
- 
-
-When you start the lab, the following resources are already created for you in the AWS account:
-
-AWS Cloud9 integrated development environment (IDE) instance
-Amazon Elastic Compute Cloud (Amazon EC2) instance for authoring code and running commands through the AWS CLI
-starting resources
-
-At the end of this lab, your architecture should look like the following example:
-
-starting resources
-
- 
-
-Duration
-This lab requires approximately 90 minutes to complete.
-
- 
-
-AWS service restrictions
-In this lab environment, access to AWS services and service actions might be restricted to the ones that are needed to complete the lab instructions. You might encounter errors if you attempt to access other services or perform actions beyond those that this lab describes.
-
-
-Accessing the AWS Management Console
-At the top of these instructions, choose Start Lab to launch your lab.
-
-A Start Lab panel opens, and it displays the lab status.
-
-Tip: If you need more time to complete the lab, choose the Start Lab button again to restart the timer for the environment.
-
-Wait until you see the message Lab status: ready, and then close the Start Lab panel by choosing the X.
-
-At the top of these instructions, choose AWS
-
-This opens the AWS Management Console in a new browser tab. The system automatically logs you in.
-
-Tip: If a new browser tab does not open, a banner or icon is usually at the top of your browser with a message that your browser is preventing the website from opening pop-up windows. Choose the banner or icon, and then choose Allow pop ups.
-
-Arrange the AWS Management Console tab so that it displays along side these instructions. Ideally, you will be able to see both browser tabs at the same time so that you can follow the lab steps more easily.
-
-
-Scenario
-The café website is up and running, and the café staff noticed a significant increase in new customer visits. Multiple customers also mentioned that it would be helpful if the website had an up-to-date menu. They could then use the menu to check the availability of food items before going to the café. 
-
-Frank and Martha ask Sofía to explore whether she can implement this feature for customers. Sofía is feeling more confident in her coding skills and has also been learning about different ways to store information in AWS. She knows that before they can dynamically update data on the website, she must first choose a data storage service to hold the data. She also needs to learn how to manage table data, load the product records, and create scripts to retrieve information from the data platform.
-
-starting resources
-
- 
-
-A business request from the café: Store menu information in the cloud
-Frank and Martha mentioned to Sofía that they want the website to dynamically update its menu information. To prepare for this new functionality, Sofía decides to store this information in DynamoDB. 
-
-Café staff must be able to retrieve information from the table. Sofía decides to create one script that retrieves all inventory items from the table and another script (as a proof of concept) that uses a product name to retrieve a single record.
-
-For this first challenge, you take on the role of Sofía. You use the AWS CLI and the SDK for Python to configure and create a DynamoDB table, load records into the table, and extract data from the table.
-
-
 Task 1: Preparing the lab
 Before you can start this lab, you must import some files and install some packages in the AWS Cloud9 environment that was prepared for you.
 
@@ -874,10 +804,6 @@ Note: If you are using the new console, the Status column may become hidden a fe
 
 The special_GSI index is a sparse index, meaning it does not have as many items as the main table. It is a subset of the data and is more efficient to scan when you want to find only the items that are part of the specials menu.
 
- 
-
- 
-
 Update the scan_with_filter.py script.
 
 Change <FMI_1> to special_GSI
@@ -885,8 +811,6 @@ Change <FMI_1> to special_GSI
 Change  <FMI_2> to tags
 
 In the upper left, choose File > Save to save your changes.
-
- 
 
 Review the code.
 
@@ -898,9 +822,7 @@ response = table.scan(
   IndexName='special_GSI',
   FilterExpression=Not(Attr('tags').contains('out of stock')))
 Note: You may be familiar with the older DynamoDB parameter, ScanFilter. This is a legacy parameter. FilterExpression should be used instead. FilterExpression does not include all of the operators that were provided with ScanFilter, for example NOT_CONTAINS. This is why you wrapped the comparison inside the Not() function.
-
-   
-
+ 
 Save the file and run it.
 
 python3 scan_with_filter.py
@@ -909,33 +831,4 @@ The output should be similar to the following:
 [{'price_in_cents': Decimal('295'), 'special': Decimal('1'), 'description': 'so good!', 'product_name': 'blueberry jelly doughnut', 'product_id_str': 'a455', 'tags': ['doughnut', 'on offer']}, {'price_in_cents': Decimal('395'), 'special': Decimal('1'), 'description': 'so good!', 'product_name': 'plain bagel', 'product_id_str': 'a465', 'tags': ['bagel', 'on offer']}, {'price_in_cents': Decimal('495'), 'special': Decimal('1'), 'description': 'yummy!', 'product_name': 'strawberry cupcake', 'product_id_str': 'a452', 'tags': ['cupcakes', 'on offer']}, {'price_in_cents': Decimal('495'), 'special': Decimal('1'), 'description': 'yummy!', 'product_name': 'chocolate chip cupcake', 'product_id_str': 'a448', 'tags': ['cupcakes', 'on offer']}, {'price_in_cents': Decimal('4595'), 'special': Decimal('1'), 'description': 'amazing taste', 'product_name': 'apple pie', 'product_id_str': 'a447', 'tags': ['whole pie', 'on offer']}]
 Again, the response is not in the format the website requires. However, when you use this code in a Lambda function in a later lab, you will adjust then.
 
- 
-
-Update from the café
-Sofía is happy with the progress that she has made. The database table is loaded with data, she addressed the café's database backend requirements, and she will soon wire this into the website. 
-
-Sofía's next task is to create an API that the website can use.
-
-Sofía decides to stop for the day, but she's looking forward to her next task. She plans to start working on creating a mock API that she can use for testing.
-
- 
-
 Submitting your work
-At the top of these instructions, choose Submit to record your progress and when prompted, choose Yes.
-If the results don't display after a couple of minutes, return to the top of these instructions and choose Grades.
-Tip: You can submit your work multiple times. After you change your work, choose Submit again. Your last submission is what is recorded for this lab.
-
-To find detailed feedback on your work, choose Details followed by View Submission Report.
- 
-
-Lab complete 
- Congratulations! You have completed the lab.
-
-Choose End Lab at the top of this page, and then select Yes to confirm that you want to end the lab.
-
-A panel indicates that DELETE has been initiated... You may close this message box now.
-
- 
-
-Select the X in the top-right corner to close the panel.
-© 2021 Amazon Web Services, Inc. and its affiliates. All rights reserved. This work may not be reproduced or redistributed, in whole or in part, without prior written permission from Amazon Web Services, Inc. Commercial copying, lending, or selling is prohibited.
